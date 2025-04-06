@@ -5,4 +5,7 @@ const apiClient = axios.create({
     timeout: 5000,
 })
 
-export default apiClient
+export const fetchRestaurantsByPostcode = async (postcode: string) => {
+    const response = await apiClient.get(`/restaurants/bypostcode/${postcode}`)
+    return response.data.Restaurants
+}
