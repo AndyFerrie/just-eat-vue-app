@@ -1,4 +1,4 @@
-import type { Restaurant } from "../types/Restaurant"
+import type { Restaurant } from "@/types/Restaurant"
 
 export const transformRestaurant = (restaurant: any): Restaurant => ({
     id: restaurant.Id,
