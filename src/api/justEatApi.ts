@@ -24,6 +24,11 @@ export const fetchRestaurantsByPostcode = async (
         }))
     } catch (error) {
         if (axios.isAxiosError(error)) {
+            if (error.response?.status === 429) {
+                throw new Error(
+                    "We’re receiving a lot of traffic right now. Please try again shortly."
+                )
+            }
             if (error.response?.status === 404) {
                 throw new Error(
                     "Postcode not found – please enter a valid UK postcode"

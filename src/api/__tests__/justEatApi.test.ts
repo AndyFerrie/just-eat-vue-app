@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest"
+import { describe, it, expect, afterEach } from "vitest"
 import MockAdapter from "axios-mock-adapter"
 import { fetchRestaurantsByPostcode, apiClient } from "../justEatApi"
 
@@ -6,6 +6,11 @@ const mock = new MockAdapter(apiClient)
 
 describe("fetchRestaurantsByPostcode", () => {
     const postcode = "ec4m"
+
+    afterEach(() => {
+        mock.reset()
+    })
+
     it("fetches restaurants successfully", async () => {
         mock.onGet(
             `https://uk.api.just-eat.io/restaurants/bypostcode/${postcode}`
@@ -71,6 +76,13 @@ describe("fetchRestaurantsByPostcode", () => {
 
         await expect(fetchRestaurantsByPostcode(postcode)).rejects.toThrow(
             "Postcode not found – please enter a valid UK postcode"
+        )
+    })
+    it("throws a user-friendly message when rate limit (429) is hit", async () => {
+        mock.onGet(`/restaurants/bypostcode/${postcode}`).reply(429)
+
+        await expect(fetchRestaurantsByPostcode(postcode)).rejects.toThrow(
+            "We’re receiving a lot of traffic right now. Please try again shortly."
         )
     })
 })
