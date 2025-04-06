@@ -3,7 +3,7 @@
         <img
             :src="restaurant.logoUrl"
             :alt="`Logo for ${restaurant.name}`"
-            class="w-16 h-16 rounded-full object-contain border border-gray-200"
+            class="w-16 h-16 object-contain"
             loading="lazy"
         />
 
