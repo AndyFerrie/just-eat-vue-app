@@ -3,6 +3,8 @@ import MockAdapter from "axios-mock-adapter"
 import { fetchRestaurantsByPostcode, apiClient } from "../justEatApi"
 
 const mock = new MockAdapter(apiClient)
+const getApiPath = (postcode: string) =>
+    `/api/restaurants/bypostcode/${postcode}`
 
 describe("fetchRestaurantsByPostcode", () => {
     const postcode = "ec4m"
@@ -12,7 +14,10 @@ describe("fetchRestaurantsByPostcode", () => {
     })
 
     it("fetches restaurants successfully", async () => {
-        mock.onGet(`/api/restaurants/bypostcode/${postcode}`).reply(200, {
+        mock.onGet(getApiPath(postcode)).reply(200, {
+            MetaData: {
+                CuisineDetails: [],
+            },
             Restaurants: [
                 {
                     Id: 1,
@@ -24,9 +29,9 @@ describe("fetchRestaurantsByPostcode", () => {
             ],
         })
 
-        const response = await fetchRestaurantsByPostcode(postcode)
+        const result = await fetchRestaurantsByPostcode(postcode)
 
-        expect(response.restaurants).toEqual([
+        expect(result.restaurants).toEqual([
             {
                 id: 1,
                 name: "The Big Cheese Pizza Co.",
@@ -37,8 +42,11 @@ describe("fetchRestaurantsByPostcode", () => {
         ])
     })
     it("transforms raw API data into Restaurant objects", async () => {
-        mock.onGet(`/api/restaurants/bypostcode/${postcode}`).reply(200, {
+        mock.onGet(getApiPath(postcode)).reply(200, {
             Area: "London",
+            MetaData: {
+                CuisineDetails: [],
+            },
             Restaurants: [
                 {
                     Id: 1,
@@ -54,9 +62,9 @@ describe("fetchRestaurantsByPostcode", () => {
             ShortResultText: "ECM4",
         })
 
-        const response = await fetchRestaurantsByPostcode(postcode)
+        const result = await fetchRestaurantsByPostcode(postcode)
 
-        expect(response.restaurants).toEqual([
+        expect(result.restaurants).toEqual([
             {
                 id: 1,
                 name: "The Big Cheese Pizza Co.",
@@ -69,7 +77,10 @@ describe("fetchRestaurantsByPostcode", () => {
     it("returns an empty array when API responds with no restaurants", async () => {
         const postcode = "zz999"
 
-        mock.onGet(`/api/restaurants/bypostcode/${postcode}`).reply(200, {
+        mock.onGet(getApiPath(postcode)).reply(200, {
+            MetaData: {
+                CuisineDetails: [],
+            },
             Restaurants: [],
         })
 
@@ -81,7 +92,7 @@ describe("fetchRestaurantsByPostcode", () => {
         })
     })
     it("returns an array of cuisine names alphabetically", async () => {
-        mock.onGet(`/api/restaurants/bypostcode/${postcode}`).reply(200, {
+        mock.onGet(getApiPath(postcode)).reply(200, {
             Restaurants: [],
             MetaData: {
                 CuisineDetails: [
@@ -95,43 +106,49 @@ describe("fetchRestaurantsByPostcode", () => {
 
         expect(result.cuisines).toEqual(["Chinese", "Pizza"]) // ✅ alphabetized
     })
-    it("throws a user-friendly message on bad request (400)", async () => {
-        const postcode = "!!!"
 
-        mock.onGet(`/api/restaurants/bypostcode/${postcode}`).reply(400)
-
-        await expect(fetchRestaurantsByPostcode(postcode)).rejects.toThrow(
-            "Invalid request – please check the postcode and try again."
-        )
-    })
-    it("throws a user-friendly error when postcode is completely invalid (404)", async () => {
-        const postcode = "!!!"
-        mock.onGet(`/api/restaurants/bypostcode/${postcode}`).reply(404)
-
-        await expect(fetchRestaurantsByPostcode(postcode)).rejects.toThrow(
-            "Postcode not found – please enter a valid UK postcode"
-        )
-    })
-    it("throws a user-friendly message when rate limit (429) is hit", async () => {
-        mock.onGet(`/api/restaurants/bypostcode/${postcode}`).reply(429)
-
-        await expect(fetchRestaurantsByPostcode(postcode)).rejects.toThrow(
-            "We’re receiving a lot of traffic right now. Please try again shortly."
-        )
-    })
-    it("throws a general error when the server returns 500", async () => {
-        mock.onGet(`/api/restaurants/bypostcode/${postcode}`).reply(500)
-
-        await expect(fetchRestaurantsByPostcode(postcode)).rejects.toThrow(
-            "Something went wrong. Please try again later."
-        )
-    })
-    it("throws a user-friendly message when a network error occurs", async () => {
+    describe("error handling", () => {
+        const errorPostcode = "!!!"
         const postcode = "ec4m"
-        mock.onGet(`/api/restaurants/bypostcode/${postcode}`).networkError()
 
-        await expect(fetchRestaurantsByPostcode(postcode)).rejects.toThrow(
-            "Network error – please check your connection and try again."
-        )
+        it("throws a user-friendly message on bad request (400)", async () => {
+            mock.onGet(getApiPath(errorPostcode)).reply(400)
+
+            await expect(
+                fetchRestaurantsByPostcode(errorPostcode)
+            ).rejects.toThrow(
+                "Invalid request – please check the postcode and try again."
+            )
+        })
+        it("throws a user-friendly error when postcode is completely invalid (404)", async () => {
+            mock.onGet(getApiPath(errorPostcode)).reply(404)
+
+            await expect(
+                fetchRestaurantsByPostcode(errorPostcode)
+            ).rejects.toThrow(
+                "Postcode not found – please enter a valid UK postcode"
+            )
+        })
+        it("throws a user-friendly message when rate limit (429) is hit", async () => {
+            mock.onGet(getApiPath(postcode)).reply(429)
+
+            await expect(fetchRestaurantsByPostcode(postcode)).rejects.toThrow(
+                "We’re receiving a lot of traffic right now. Please try again shortly."
+            )
+        })
+        it("throws a general error when the server returns 500", async () => {
+            mock.onGet(getApiPath(postcode)).reply(500)
+
+            await expect(fetchRestaurantsByPostcode(postcode)).rejects.toThrow(
+                "Something went wrong. Please try again later."
+            )
+        })
+        it("throws a user-friendly message when a network error occurs", async () => {
+            mock.onGet(getApiPath(postcode)).networkError()
+
+            await expect(fetchRestaurantsByPostcode(postcode)).rejects.toThrow(
+                "Network error – please check your connection and try again."
+            )
+        })
     })
 })
