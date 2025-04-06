@@ -70,6 +70,17 @@ describe("fetchRestaurantsByPostcode", () => {
             },
         ])
     })
+    it("returns an empty array when API responds with no restaurants", async () => {
+        const postcode = "zz999"
+
+        mock.onGet(`/restaurants/bypostcode/${postcode}`).reply(200, {
+            Restaurants: [],
+        })
+
+        const result = await fetchRestaurantsByPostcode(postcode)
+
+        expect(result).toEqual([])
+    })
     it("throws a user-friendly message on bad request (400)", async () => {
         const postcode = "!!!"
 
