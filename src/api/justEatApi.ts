@@ -1,5 +1,5 @@
 import axios from "axios"
-import type { Restaurant } from "@/types/Restaurant"
+import type { RestaurantsResponse } from "@/types/restaurants"
 import { transformRestaurant } from "@/utils/transform"
 
 export const apiClient = axios.create({
@@ -9,13 +9,19 @@ export const apiClient = axios.create({
 
 export const fetchRestaurantsByPostcode = async (
     postcode: string
-): Promise<Restaurant[]> => {
+): Promise<RestaurantsResponse> => {
     try {
         const response = await apiClient.get(
             `/restaurants/bypostcode/${postcode}`
         )
 
-        return response.data.Restaurants.map(transformRestaurant)
+        return {
+            restaurants: response.data.Restaurants.map(transformRestaurant),
+            cuisines:
+                response.data.MetaData?.CuisineDetails.map(
+                    (c: any) => c.Name
+                ).sort() || [],
+        }
     } catch (error) {
         if (axios.isAxiosError(error)) {
             if (!error.response) {
