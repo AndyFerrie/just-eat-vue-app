@@ -1,1 +1,22 @@
 @import "tailwindcss";
+
+:root {
+    --color-primary: #f36805;
+    --color-brand: #ff8000;
+}
+
+body {
+    font-family: "JetSansDigital", sans-serif;
+}
+
+.bg-primary {
+    background-color: var(--color-primary);
+}
+
+.bg-brand {
+    background-color: var(--color-brand);
+}
+
+.jetsans {
+    font-family: "JetSansDigital", sans-serif;
+}
