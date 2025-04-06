@@ -65,4 +65,12 @@ describe("fetchRestaurantsByPostcode", () => {
             },
         ])
     })
+    it("throws a user-friendly error when postcode is completely invalid (404)", async () => {
+        const postcode = "!!!"
+        mock.onGet(`/restaurants/bypostcode/${postcode}`).reply(404)
+
+        await expect(fetchRestaurantsByPostcode(postcode)).rejects.toThrow(
+            "Postcode not found – please enter a valid UK postcode"
+        )
+    })
 })

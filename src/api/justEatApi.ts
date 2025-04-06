@@ -9,14 +9,28 @@ export const apiClient = axios.create({
 export const fetchRestaurantsByPostcode = async (
     postcode: string
 ): Promise<Restaurant[]> => {
-    const response = await apiClient.get(`/restaurants/bypostcode/${postcode}`)
-    return response.data.Restaurants.map((restaurant: any) => ({
-        id: restaurant.Id,
-        name: restaurant.Name,
-        logoUrl: restaurant.LogoUrl,
-        rating: { starRating: restaurant.Rating.StarRating },
-        cuisines: restaurant.Cuisines.map((cuisine: any) => ({
-            name: cuisine.Name,
-        })),
-    }))
+    try {
+        const response = await apiClient.get(
+            `/restaurants/bypostcode/${postcode}`
+        )
+        return response.data.Restaurants.map((restaurant: any) => ({
+            id: restaurant.Id,
+            name: restaurant.Name,
+            logoUrl: restaurant.LogoUrl,
+            rating: { starRating: restaurant.Rating.StarRating },
+            cuisines: restaurant.Cuisines.map((cuisine: any) => ({
+                name: cuisine.Name,
+            })),
+        }))
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            if (error.response?.status === 404) {
+                throw new Error(
+                    "Postcode not found – please enter a valid UK postcode"
+                )
+            }
+            throw new Error(error.message)
+        }
+        throw new Error("An unexpected error occurred")
+    }
 }
