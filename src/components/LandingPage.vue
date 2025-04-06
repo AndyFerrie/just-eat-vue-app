@@ -49,6 +49,7 @@ const filteredRestaurants = computed(() => {
             @submit="handleSearch"
         />
         <CuisineFilter
+            v-if="restaurants && restaurants.length > 0"
             :cuisines="allCuisines"
             :selected="selectedCuisine"
             @select="selectedCuisine = $event"
