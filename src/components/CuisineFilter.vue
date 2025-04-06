@@ -1,10 +1,11 @@
 <template>
-    <div class="flex flex-wrap gap-2 mt-4">
+    <div class="flex flex-col gap-2">
         <Button
             :primary="selected === null"
             :disabled="disabled"
-            :aria-pressed="selected === null"
+            class="justify-start w-full px-3 py-2 text-sm"
             aria-label="Show all cuisines"
+            :aria-pressed="selected === null"
             @click="$emit('select', null)"
         >
             All
@@ -15,8 +16,9 @@
             :key="cuisine"
             :primary="selected === cuisine"
             :disabled="disabled"
-            :aria-pressed="selected === cuisine"
+            class="justify-start w-full px-3 py-2 text-sm"
             :aria-label="`Filter by ${cuisine}`"
+            :aria-pressed="selected === cuisine"
             @click="$emit('select', cuisine)"
         >
             {{ cuisine }}
