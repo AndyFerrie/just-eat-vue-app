@@ -24,26 +24,32 @@ export const fetchRestaurantsByPostcode = async (
         }))
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            if (error.response?.status === 400) {
-                throw new Error(
-                    "Invalid request – please check the postcode and try again."
-                )
-            } else if (error.response?.status === 404) {
-                throw new Error(
-                    "Postcode not found – please enter a valid UK postcode"
-                )
-            } else if (error.response?.status === 429) {
-                throw new Error(
-                    "We’re receiving a lot of traffic right now. Please try again shortly."
-                )
-            } else if (error.response?.status === 500) {
-                throw new Error("Something went wrong. Please try again later.")
-            } else if (!error.response) {
+            if (!error.response) {
                 throw new Error(
                     "Network error – please check your connection and try again."
                 )
             }
-            throw new Error(error.message)
+
+            switch (error.response.status) {
+                case 400:
+                    throw new Error(
+                        "Invalid request – please check the postcode and try again."
+                    )
+                case 404:
+                    throw new Error(
+                        "Postcode not found – please enter a valid UK postcode"
+                    )
+                case 429:
+                    throw new Error(
+                        "We’re receiving a lot of traffic right now. Please try again shortly."
+                    )
+                case 500:
+                    throw new Error(
+                        "Something went wrong. Please try again later."
+                    )
+                default:
+                    throw new Error(error.message)
+            }
         }
         throw new Error("An unexpected error occurred")
     }
