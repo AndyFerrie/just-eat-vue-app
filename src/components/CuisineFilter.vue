@@ -3,6 +3,8 @@
         <Button
             :primary="selected === null"
             :disabled="disabled"
+            :aria-pressed="selected === null"
+            aria-label="Show all cuisines"
             @click="$emit('select', null)"
         >
             All
@@ -13,6 +15,8 @@
             :key="cuisine"
             :primary="selected === cuisine"
             :disabled="disabled"
+            :aria-pressed="selected === cuisine"
+            :aria-label="`Filter by ${cuisine}`"
             @click="$emit('select', cuisine)"
         >
             {{ cuisine }}
