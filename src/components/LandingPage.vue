@@ -52,16 +52,15 @@
                     Restaurants that deliver to {{ searchedPostcode }}
                 </h2>
 
-                <ul
+                <InfiniteList
                     v-if="filteredRestaurants.length"
-                    class="space-y-4"
+                    :items="filteredRestaurants"
+                    :step="10"
                 >
-                    <RestaurantCard
-                        v-for="restaurant in filteredRestaurants"
-                        :key="restaurant.id"
-                        :restaurant="restaurant"
-                    />
-                </ul>
+                    <template #default="{ item }">
+                        <RestaurantCard :restaurant="item" />
+                    </template>
+                </InfiniteList>
             </section>
         </div>
     </div>
@@ -72,6 +71,7 @@ import { ref, computed } from 'vue'
 import PostcodeSearchBox from '@/components/PostcodeSearchBox.vue'
 import CuisineFilter from '@/components/CuisineFilter.vue'
 import RestaurantCard from '@/components/RestaurantCard.vue'
+import InfiniteList from './InfiniteList.vue'
 import { fetchRestaurantsByPostcode } from '@/api/justEatApi'
 import type { Restaurant } from '@/types/restaurants'
 
