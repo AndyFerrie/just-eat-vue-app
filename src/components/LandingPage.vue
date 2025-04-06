@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import PostcodeSearchBox from '@/components/PostcodeSearchBox.vue'
+import CuisineFilter from '@/components/CuisineFilter.vue'
 import { fetchRestaurantsByPostcode } from '@/api/justEatApi'
 import type { Restaurant } from '@/types/restaurants'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const postcode = ref('')
 const restaurants = ref<Restaurant[] | null>(null)
@@ -27,6 +28,18 @@ const handleSearch = async (value: string) => {
     selectedCuisine.value = null
   }
 }
+
+const filteredRestaurants = computed(() => {
+  if (!restaurants.value) return []
+  if (!selectedCuisine.value) return restaurants.value
+
+  return restaurants.value.filter((restaurant) =>
+    restaurant.cuisines.some(
+      (cuisine) =>
+        cuisine.name.toLowerCase() === selectedCuisine.value?.toLowerCase()
+    )
+  )
+})
 </script>
 
 <template>
@@ -34,6 +47,11 @@ const handleSearch = async (value: string) => {
         <PostcodeSearchBox
             v-model="postcode"
             @submit="handleSearch"
+        />
+        <CuisineFilter
+            :cuisines="allCuisines"
+            :selected="selectedCuisine"
+            @select="selectedCuisine = $event"
         />
 
         <div
@@ -44,11 +62,11 @@ const handleSearch = async (value: string) => {
         </div>
 
         <ul
-            v-if="restaurants"
+            v-if="filteredRestaurants.length"
             class="mt-6 w-full max-w-xl space-y-4"
         >
             <li
-                v-for="restaurant in restaurants"
+                v-for="restaurant in filteredRestaurants"
                 :key="restaurant.id"
                 class="bg-white p-4 rounded shadow"
             >
