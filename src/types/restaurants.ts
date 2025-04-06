@@ -5,3 +5,8 @@ export interface Restaurant {
     rating: { starRating: number }
     cuisines: Array<{ name: string }>
 }
+
+export interface RestaurantsResponse {
+    restaurants: Restaurant[]
+    cuisines: string[]
+}
