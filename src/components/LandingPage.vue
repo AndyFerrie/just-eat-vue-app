@@ -2,11 +2,13 @@
 import PostcodeSearchBox from '@/components/PostcodeSearchBox.vue'
 import CuisineFilter from '@/components/CuisineFilter.vue'
 import RestaurantCard from '@/components/RestaurantCard.vue'
+import InfiniteList from './InfiniteList.vue'
 import { fetchRestaurantsByPostcode } from '@/api/justEatApi'
 import type { Restaurant } from '@/types/restaurants'
 import { ref, computed } from 'vue'
 
 const postcode = ref('')
+const searchedPostcode = ref('')
 const restaurants = ref<Restaurant[] | null>(null)
 const allCuisines = ref<string[]>([])
 const selectedCuisine = ref<string | null>(null)
@@ -14,6 +16,7 @@ const error = ref<string | null>(null)
 
 const handleSearch = async (value: string) => {
   postcode.value = value
+  searchedPostcode.value = value
   error.value = null
 
   try {
@@ -71,19 +74,17 @@ const filteredRestaurants = computed(() => {
             class="mt-6 text-xl font-bold"
             id="restaurant-results"
         >
-            Restaurants that deliver to {{ postcode }}
+            Restaurants that deliver to {{ searchedPostcode }}
         </h2>
 
-        <ul
+        <InfiniteList
             v-if="filteredRestaurants.length"
-            :aria-labelledby="'restaurant-results'"
-            class="mt-2 w-full max-w-xl space-y-4"
+            :items="filteredRestaurants"
+            :step="10"
         >
-            <RestaurantCard
-                v-for="restaurant in filteredRestaurants"
-                :key="restaurant.id"
-                :restaurant="restaurant"
-            />
-        </ul>
+            <template #default="{ item }">
+                <RestaurantCard :restaurant="item" />
+            </template>
+        </InfiniteList>
     </main>
 </template>
