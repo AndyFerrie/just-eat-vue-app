@@ -1,21 +1,30 @@
 <script setup lang="ts">
 import PostcodeSearchBox from '@/components/PostcodeSearchBox.vue'
 import { fetchRestaurantsByPostcode } from '@/api/justEatApi'
-import type { Restaurant } from '@/types/Restaurant'
+import type { Restaurant } from '@/types/restaurants'
 import { ref } from 'vue'
 
 const postcode = ref('')
 const restaurants = ref<Restaurant[] | null>(null)
+const allCuisines = ref<string[]>([])
+const selectedCuisine = ref<string | null>(null)
 const error = ref<string | null>(null)
 
 const handleSearch = async (value: string) => {
   postcode.value = value
   error.value = null
+
   try {
-    restaurants.value = await fetchRestaurantsByPostcode(value)
+    const result = await fetchRestaurantsByPostcode(value)
+
+    restaurants.value = result.restaurants
+    allCuisines.value = result.cuisines
+    selectedCuisine.value = null
   } catch (err: any) {
     error.value = err.message || 'Something went wrong'
     restaurants.value = null
+    allCuisines.value = []
+    selectedCuisine.value = null
   }
 }
 </script>
