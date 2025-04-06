@@ -3,7 +3,7 @@ import type { Restaurant } from "@/types/Restaurant"
 import { transformRestaurant } from "@/utils/transform"
 
 export const apiClient = axios.create({
-    baseURL: "https://uk.api.just-eat.io",
+    baseURL: "/api",
     timeout: 5000,
 })
 
