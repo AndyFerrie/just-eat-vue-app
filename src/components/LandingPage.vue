@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import PostcodeSearchBox from '@/components/PostcodeSearchBox.vue'
 import CuisineFilter from '@/components/CuisineFilter.vue'
+import RestaurantCard from '@/components/RestaurantCard.vue'
 import { fetchRestaurantsByPostcode } from '@/api/justEatApi'
 import type { Restaurant } from '@/types/restaurants'
 import { ref, computed } from 'vue'
@@ -78,18 +79,11 @@ const filteredRestaurants = computed(() => {
             :aria-labelledby="'restaurant-results'"
             class="mt-2 w-full max-w-xl space-y-4"
         >
-            <li
+            <RestaurantCard
                 v-for="restaurant in filteredRestaurants"
                 :key="restaurant.id"
-                class="bg-white p-4 rounded shadow"
-            >
-                <h3 class="font-bold text-lg">{{ restaurant.name }}</h3>
-                <p class="text-sm text-gray-600">
-                    Rating: {{ restaurant.rating.starRating }} ★<br />
-                    Cuisines:
-                    {{ restaurant.cuisines.map(c => c.name).join(', ') }}
-                </p>
-            </li>
+                :restaurant="restaurant"
+            />
         </ul>
     </main>
 </template>
