@@ -70,6 +70,15 @@ describe("fetchRestaurantsByPostcode", () => {
             },
         ])
     })
+    it("throws a user-friendly message on bad request (400)", async () => {
+        const postcode = "!!!"
+
+        mock.onGet(`/restaurants/bypostcode/${postcode}`).reply(400)
+
+        await expect(fetchRestaurantsByPostcode(postcode)).rejects.toThrow(
+            "Invalid request – please check the postcode and try again."
+        )
+    })
     it("throws a user-friendly error when postcode is completely invalid (404)", async () => {
         const postcode = "!!!"
         mock.onGet(`/restaurants/bypostcode/${postcode}`).reply(404)
@@ -83,6 +92,21 @@ describe("fetchRestaurantsByPostcode", () => {
 
         await expect(fetchRestaurantsByPostcode(postcode)).rejects.toThrow(
             "We’re receiving a lot of traffic right now. Please try again shortly."
+        )
+    })
+    it("throws a general error when the server returns 500", async () => {
+        mock.onGet(`/restaurants/bypostcode/${postcode}`).reply(500)
+
+        await expect(fetchRestaurantsByPostcode(postcode)).rejects.toThrow(
+            "Something went wrong. Please try again later."
+        )
+    })
+    it("throws a user-friendly message when a network error occurs", async () => {
+        const postcode = "ec4m"
+        mock.onGet(`/restaurants/bypostcode/${postcode}`).networkError()
+
+        await expect(fetchRestaurantsByPostcode(postcode)).rejects.toThrow(
+            "Network error – please check your connection and try again."
         )
     })
 })
