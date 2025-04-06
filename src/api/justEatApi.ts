@@ -1,5 +1,6 @@
 import axios from "axios"
 import type { Restaurant } from "../types/Restaurant"
+import { transformRestaurant } from "../utils/transform"
 
 export const apiClient = axios.create({
     baseURL: "https://uk.api.just-eat.io",
@@ -13,15 +14,8 @@ export const fetchRestaurantsByPostcode = async (
         const response = await apiClient.get(
             `/restaurants/bypostcode/${postcode}`
         )
-        return response.data.Restaurants.map((restaurant: any) => ({
-            id: restaurant.Id,
-            name: restaurant.Name,
-            logoUrl: restaurant.LogoUrl,
-            rating: { starRating: restaurant.Rating.StarRating },
-            cuisines: restaurant.Cuisines.map((cuisine: any) => ({
-                name: cuisine.Name,
-            })),
-        }))
+
+        return response.data.Restaurants.map(transformRestaurant)
     } catch (error) {
         if (axios.isAxiosError(error)) {
             if (!error.response) {
