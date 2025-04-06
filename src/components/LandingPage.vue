@@ -43,11 +43,12 @@ const filteredRestaurants = computed(() => {
 </script>
 
 <template>
-    <div class="min-h-screen bg-[#f5f3f1] p-4 flex flex-col items-center">
+    <main class="min-h-screen bg-[#f5f3f1] p-4 flex flex-col items-center">
         <PostcodeSearchBox
             v-model="postcode"
             @submit="handleSearch"
         />
+
         <CuisineFilter
             v-if="restaurants && restaurants.length > 0"
             :cuisines="allCuisines"
@@ -58,13 +59,24 @@ const filteredRestaurants = computed(() => {
         <div
             v-if="error"
             class="mt-4 text-red-600"
+            role="alert"
+            aria-live="assertive"
         >
             {{ error }}
         </div>
 
+        <h2
+            v-if="filteredRestaurants.length"
+            class="mt-6 text-xl font-bold"
+            id="restaurant-results"
+        >
+            Restaurants that deliver to {{ postcode }}
+        </h2>
+
         <ul
             v-if="filteredRestaurants.length"
-            class="mt-6 w-full max-w-xl space-y-4"
+            :aria-labelledby="'restaurant-results'"
+            class="mt-2 w-full max-w-xl space-y-4"
         >
             <li
                 v-for="restaurant in filteredRestaurants"
@@ -79,5 +91,5 @@ const filteredRestaurants = computed(() => {
                 </p>
             </li>
         </ul>
-    </div>
+    </main>
 </template>
