@@ -1,4 +1,3 @@
-class=" "
 <template>
     <button
         :type="type"
