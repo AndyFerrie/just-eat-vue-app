@@ -14,15 +14,13 @@ This project is a front-end proof of concept for a postcode-based restaurant sea
 
 ## 🖼️ Preview
 
-<div style="display: flex; gap: 16px;">
-  <div style="text-align: center;">
-    <p><strong>Landing Page</strong></p>
-    <img src="./public/screenshots/landingPage.png" alt="Landing Page" width="600" />
-  </div>
-  <div style="text-align: center;">
-    <p><strong>Search Results Page</strong></p>
-    <img src="./public/screenshots/searchResultsPage.png" alt="Search Results Page" width="600" />
-  </div>
+<div style="text-align: center;">
+    <h3>Landing Page</h3>
+    <img src="./public/screenshots/landingPage.png" alt="Landing Page" />
+</div>
+<div style="text-align: center;">
+    <h3>Search Results Page</h3>
+    <img src="./public/screenshots/searchResultsPage.png" alt="Search Results Page" />
 </div>
 
 ## 🧩 Component Structure
