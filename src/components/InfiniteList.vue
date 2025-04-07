@@ -1,5 +1,9 @@
 <template>
-    <ul class="space-y-4">
+    <ul
+        :data-testid="testId"
+        role="list"
+        class="space-y-4"
+    >
         <slot
             v-for="(item, index) in visibleItems"
             :key="keyBy ? item[keyBy] : index"
@@ -11,6 +15,7 @@
             v-if="hasMore"
             ref="loadMoreTrigger"
             class="h-1"
+            role="listitem"
         ></li>
     </ul>
 </template>
@@ -23,6 +28,7 @@ const props = defineProps<{
   items: T[]
   step?: number
   keyBy?: string
+  testId?: string
 }>()
 
 const emit = defineEmits<{

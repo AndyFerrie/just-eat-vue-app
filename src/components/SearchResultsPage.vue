@@ -54,6 +54,7 @@
                 <InfiniteList
                     :items="filteredRestaurants"
                     :step="10"
+                    test-id="restaurant-list"
                 >
                     <template #default="{ item }">
                         <RestaurantCard :restaurant="item" />
