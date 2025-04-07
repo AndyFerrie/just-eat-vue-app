@@ -5,21 +5,16 @@
             @submit="handleSearch"
         />
 
-        <div
+        <Spinner
+            v-if="loading"
+            label="Finding restaurants near you..."
+            class="mt-6"
+        />
+
+        <NoResults
             v-if="searchedPostcode && restaurants && restaurants.length === 0"
-            aria-live="polite"
-        >
-            <p class="mt-10 text-center text-xl">
-                😔 Sorry, no restaurants deliver to
-                <strong
-                    class="font-semibold"
-                    >{{ searchedPostcode.toUpperCase() }}</strong
-                >.
-            </p>
-            <p class="mt-6 text-center text-xl">
-                Please try a different postcode.
-            </p>
-        </div>
+            :searchQuery="searchedPostcode"
+        />
 
         <div class="mt-6 flex flex-col lg:flex-row w-full max-w-6xl gap-6">
             <!-- Sidebar with filters -->
@@ -74,11 +69,14 @@ import PostcodeSearchBox from '@/components/PostcodeSearchBox.vue'
 import CuisineFilter from '@/components/CuisineFilter.vue'
 import RestaurantCard from '@/components/RestaurantCard.vue'
 import InfiniteList from '@/components/InfiniteList.vue'
+import Spinner from '@/components/Spinner.vue'
+import NoResults from './NoResults.vue'
 import { fetchRestaurantsByPostcode } from '@/api/justEatApi'
 import type { Restaurant } from '@/types/restaurants'
 
 const postcode = ref('')
 const searchedPostcode = ref('')
+const loading = ref(false)
 const restaurants = ref<Restaurant[] | null>(null)
 const allCuisines = ref<string[]>([])
 const selectedCuisine = ref<string | null>(null)
@@ -115,6 +113,7 @@ const handleSearch = async (value: string) => {
   postcode.value = value
   searchedPostcode.value = value
   error.value = null
+  loading.value = true
 
   restaurants.value = null
   allCuisines.value = []
@@ -133,6 +132,8 @@ const handleSearch = async (value: string) => {
     restaurants.value = null
     allCuisines.value = []
     selectedCuisine.value = null
+  } finally {
+    loading.value = false
   }
 }
 </script>
