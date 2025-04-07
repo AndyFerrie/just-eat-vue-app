@@ -1,12 +1,12 @@
 <template>
-    <LandingPage />
+    <router-view />
     <Toaster
         position="top-center"
         richColors
+        closeButton
     />
 </template>
 
 <script setup lang="ts">
 import { Toaster } from 'vue-sonner'
-import LandingPage from './components/LandingPage.vue';
 </script>
