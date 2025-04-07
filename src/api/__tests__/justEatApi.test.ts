@@ -104,7 +104,7 @@ describe("fetchRestaurantsByPostcode", () => {
 
         const result = await fetchRestaurantsByPostcode(postcode)
 
-        expect(result.cuisines).toEqual(["Chinese", "Pizza"]) // ✅ alphabetized
+        expect(result.cuisines).toEqual(["Chinese", "Pizza"])
     })
 
     describe("error handling", () => {
