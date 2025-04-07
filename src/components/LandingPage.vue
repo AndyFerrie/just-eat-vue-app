@@ -38,10 +38,10 @@
                 </div>
 
                 <h2
-                    v-if="filteredRestaurants.length"
+                    v-if="restaurantCountText"
                     class="mb-4 font-bold text-lg"
                 >
-                    Restaurants that deliver to {{ searchedPostcode }}
+                    {{ restaurantCountText }}
                 </h2>
 
                 <InfiniteList
@@ -82,6 +82,23 @@ const filteredRestaurants = computed(() => {
       (c) => c.name.toLowerCase() === selectedCuisine.value?.toLowerCase()
     )
   )
+})
+
+const restaurantCountText = computed(() => {
+  const count = filteredRestaurants.value.length
+  const postcodeText = searchedPostcode.value.toUpperCase()
+
+  if (!count || !postcodeText) return ''
+
+  const isSingular = count === 1
+
+  const cuisineText = selectedCuisine.value
+    ? `${selectedCuisine.value} restaurant${isSingular ? '' : 's'}`
+    : `restaurant${isSingular ? '' : 's'}`
+
+  const verb = isSingular ? 'delivers' : 'deliver'
+
+  return `${count} ${cuisineText} ${verb} to ${postcodeText}`
 })
 
 const handleSearch = async (value: string) => {
