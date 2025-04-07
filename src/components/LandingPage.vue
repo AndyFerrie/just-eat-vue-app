@@ -9,7 +9,7 @@
             <!-- Sidebar with filters -->
             <aside
                 v-if="restaurants && restaurants.length"
-                class="w-full lg:w-1/4"
+                class="w-full lg:w-1/4 max-h-[60vh] overflow-y-auto pr-1"
                 role="region"
                 aria-labelledby="cuisine-filter-heading"
             >
@@ -21,19 +21,11 @@
                 </h2>
 
                 <CuisineFilter
-                    :cuisines="visibleCuisines"
+                    :cuisines="allCuisines"
                     :selected="selectedCuisine"
                     :disabled="false"
                     @select="selectedCuisine = $event"
                 />
-
-                <button
-                    v-if="allCuisines.length > MAX_VISIBLE"
-                    @click="showAll = !showAll"
-                    class="mt-2 text-primary text-sm underline"
-                >
-                    {{ showAll ? 'Show less' : 'View more cuisines' }}
-                </button>
             </aside>
 
             <!-- Restaurant results -->
@@ -71,7 +63,7 @@ import { ref, computed } from 'vue'
 import PostcodeSearchBox from '@/components/PostcodeSearchBox.vue'
 import CuisineFilter from '@/components/CuisineFilter.vue'
 import RestaurantCard from '@/components/RestaurantCard.vue'
-import InfiniteList from './InfiniteList.vue'
+import InfiniteList from '@/components/InfiniteList.vue'
 import { fetchRestaurantsByPostcode } from '@/api/justEatApi'
 import type { Restaurant } from '@/types/restaurants'
 
@@ -81,13 +73,6 @@ const restaurants = ref<Restaurant[] | null>(null)
 const allCuisines = ref<string[]>([])
 const selectedCuisine = ref<string | null>(null)
 const error = ref<string | null>(null)
-
-const showAll = ref(false)
-const MAX_VISIBLE = 10
-
-const visibleCuisines = computed(() =>
-  showAll.value ? allCuisines.value : allCuisines.value.slice(0, MAX_VISIBLE)
-)
 
 const filteredRestaurants = computed(() => {
   if (!restaurants.value) return []
