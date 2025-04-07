@@ -9,13 +9,14 @@ describe("Just Eat Search Page", () => {
         cy.visit("/")
         cy.get('input[aria-label="Enter your postcode"]').type("EC4M")
         cy.get('button[aria-label="Search by postcode"]').click()
+
+        cy.url().should("include", "/search?postcode=EC4M")
+
         cy.wait("@getRestaurants")
     })
 
     it("shows search results for EC4M", () => {
-        cy.url().should("include", "/search?postcode=EC4M")
         cy.get('[data-testid="spinner"]').should("not.exist")
-
         cy.contains(/^1995 restaurants deliver to EC4M$/).should("exist")
         cy.get('[data-testid="restaurant-list"]')
             .find('[role="listitem"]')
@@ -45,6 +46,8 @@ describe("Just Eat Search Page", () => {
         cy.visit("/")
         cy.get('input[aria-label="Enter your postcode"]').type("NORESTAURANTS")
         cy.get('button[aria-label="Search by postcode"]').click()
+
+        cy.url().should("include", "/search?postcode=NORESTAURANTS")
         cy.wait("@getEmptyResults")
 
         cy.get('[data-testid="spinner"]').should("not.exist")
