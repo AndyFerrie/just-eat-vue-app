@@ -30,13 +30,6 @@
 
             <!-- Restaurant results -->
             <section class="flex-1">
-                <div
-                    v-if="error"
-                    class="text-red-600 mb-4"
-                >
-                    {{ error }}
-                </div>
-
                 <h2
                     v-if="restaurantCountText"
                     class="mb-4 font-bold text-lg"
@@ -60,6 +53,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { toast } from 'vue-sonner'
 import PostcodeSearchBox from '@/components/PostcodeSearchBox.vue'
 import CuisineFilter from '@/components/CuisineFilter.vue'
 import RestaurantCard from '@/components/RestaurantCard.vue'
@@ -111,7 +105,11 @@ const handleSearch = async (value: string) => {
     allCuisines.value = result.cuisines
     selectedCuisine.value = null
   } catch (err: any) {
-    error.value = err.message || 'Something went wrong'
+    const message = err.message || 'Something went wrong'
+
+    error.value = message
+    toast.error(message)
+
     restaurants.value = null
     allCuisines.value = []
     selectedCuisine.value = null
