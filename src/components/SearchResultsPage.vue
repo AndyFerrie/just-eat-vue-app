@@ -1,36 +1,29 @@
 <template>
     <div
-        class="min-h-screen bg-[#f5f3f1] p-4 flex flex-col items-center"
-        :class="{ 'justify-center': searchedPostcode && restaurants?.length === 0 }"
+        v-if="loading"
+        class="fixed inset-0 z-50 bg-white/80 flex items-center justify-center"
+        aria-busy="true"
     >
-        <transition
-            name="fade"
-            mode="out-in"
-        >
-            <template v-if="loading">
-                <div
-                    class="flex flex-col items-center justify-center min-h-[60vh]"
-                >
-                    <Spinner label="Finding restaurants near you..." />
-                </div>
-            </template>
-            <template v-else>
-                <PostcodeSearchBox
-                    v-model="postcode"
-                    @submit="handleSearch"
-                />
-            </template>
-        </transition>
+        <Spinner label="Finding restaurants near you..." />
+    </div>
+
+    <div class="min-h-screen bg-[#f5f3f1] p-4 flex flex-col items-center">
+        <PostcodeSearchBox
+            v-model="postcode"
+            @submit="handleSearch"
+        />
 
         <NoResults
             v-if="searchedPostcode && restaurants && restaurants.length === 0"
             :searchQuery="searchedPostcode"
         />
 
-        <div class="mt-6 flex flex-col lg:flex-row w-full max-w-6xl gap-6">
+        <div
+            v-if="filteredRestaurants.length"
+            class="mt-6 flex flex-col lg:flex-row w-full max-w-6xl gap-6"
+        >
             <!-- Sidebar with filters -->
             <aside
-                v-if="restaurants && restaurants.length"
                 class="w-full lg:w-1/4 max-h-[60vh] overflow-y-auto pr-1"
                 role="region"
                 aria-labelledby="cuisine-filter-heading"
@@ -41,7 +34,6 @@
                 >
                     Cuisine Filters
                 </h2>
-
                 <CuisineFilter
                     :cuisines="allCuisines"
                     :selected="selectedCuisine"
@@ -60,7 +52,6 @@
                 </h2>
 
                 <InfiniteList
-                    v-if="filteredRestaurants.length"
                     :items="filteredRestaurants"
                     :step="10"
                 >
@@ -75,8 +66,9 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { toast } from 'vue-sonner'
 import { useRoute } from 'vue-router'
+import { toast } from 'vue-sonner'
+
 import PostcodeSearchBox from '@/components/PostcodeSearchBox.vue'
 import CuisineFilter from '@/components/CuisineFilter.vue'
 import RestaurantCard from '@/components/RestaurantCard.vue'
@@ -87,6 +79,7 @@ import { fetchRestaurantsByPostcode } from '@/api/justEatApi'
 import type { Restaurant } from '@/types/restaurants'
 
 const route = useRoute()
+
 const postcode = ref('')
 const searchedPostcode = ref('')
 const loading = ref(false)
@@ -112,11 +105,9 @@ const restaurantCountText = computed(() => {
   if (!count || !postcodeText) return ''
 
   const isSingular = count === 1
-
   const cuisineText = selectedCuisine.value
     ? `${selectedCuisine.value} restaurant${isSingular ? '' : 's'}`
     : `restaurant${isSingular ? '' : 's'}`
-
   const verb = isSingular ? 'delivers' : 'deliver'
 
   return `${count} ${cuisineText} ${verb} to ${postcodeText}`
@@ -131,6 +122,7 @@ const handleSearch = async (value: string) => {
   restaurants.value = null
   allCuisines.value = []
   selectedCuisine.value = null
+
   try {
     const result = await fetchRestaurantsByPostcode(value)
     restaurants.value = result.restaurants
@@ -138,10 +130,8 @@ const handleSearch = async (value: string) => {
     selectedCuisine.value = null
   } catch (err: any) {
     const message = err.message || 'Something went wrong'
-
     error.value = message
     toast.error(message)
-
     restaurants.value = null
     allCuisines.value = []
     selectedCuisine.value = null
