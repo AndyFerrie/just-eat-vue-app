@@ -5,6 +5,22 @@
             @submit="handleSearch"
         />
 
+        <div
+            v-if="searchedPostcode && restaurants && restaurants.length === 0"
+            aria-live="polite"
+        >
+            <p class="mt-10 text-center text-xl">
+                😔 Sorry, no restaurants deliver to
+                <strong
+                    class="font-semibold"
+                    >{{ searchedPostcode.toUpperCase() }}</strong
+                >.
+            </p>
+            <p class="mt-6 text-center text-xl">
+                Please try a different postcode.
+            </p>
+        </div>
+
         <div class="mt-6 flex flex-col lg:flex-row w-full max-w-6xl gap-6">
             <!-- Sidebar with filters -->
             <aside
@@ -99,6 +115,10 @@ const handleSearch = async (value: string) => {
   postcode.value = value
   searchedPostcode.value = value
   error.value = null
+
+  restaurants.value = null
+  allCuisines.value = []
+  selectedCuisine.value = null
   try {
     const result = await fetchRestaurantsByPostcode(value)
     restaurants.value = result.restaurants
