@@ -34,7 +34,7 @@
 import type { Restaurant } from '@/types/restaurants'
 import StarRating from '@/components/StarRating.vue'
 
-const props = defineProps<{
+const { restaurant } = defineProps<{
   restaurant: Restaurant
 }>()
 </script>
