@@ -3,6 +3,7 @@
         class="flex flex-col items-center text-gray-700"
         role="status"
         aria-label="Loading"
+        data-testid="spinner"
     >
         <svg
             class="animate-spin h-8 w-8 text-primary mb-2"
