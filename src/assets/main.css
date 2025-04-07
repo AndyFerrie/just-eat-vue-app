@@ -17,6 +17,10 @@ body {
     background-color: var(--color-brand);
 }
 
+.text-primary {
+    color: var(--color-primary);
+}
+
 .jetsans {
     font-family: "JetSansDigital", sans-serif;
 }

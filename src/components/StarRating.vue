@@ -10,7 +10,7 @@
                 :key="'full-' + i"
             >
                 <svg
-                    class="w-4 h-4 text-yellow-400"
+                    class="w-4 h-4 text-primary"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                 >
