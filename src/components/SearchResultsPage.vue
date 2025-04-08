@@ -92,9 +92,9 @@ const error = ref<string | null>(null)
 const filteredRestaurants = computed(() => {
   if (!restaurants.value) return []
   if (!selectedCuisine.value) return restaurants.value
-  return restaurants.value.filter((r) =>
-    r.cuisines.some(
-      (c) => c.name.toLowerCase() === selectedCuisine.value?.toLowerCase()
+  return restaurants.value.filter((restaurant) =>
+    restaurant.cuisines.some(
+      (cuisine) => cuisine.name.toLowerCase() === selectedCuisine.value?.toLowerCase()
     )
   )
 })
