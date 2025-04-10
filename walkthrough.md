@@ -92,7 +92,7 @@ Built foundational UI components early on:
 
 ## 🧪 CORS Proxy with Vite
 
-Encountered CORS issues when testing against the real API. Solved this using Vite’s proxy config during development.
+While testing against the live Just Eat API, I encountered cross-origin issues in the browser. To resolve this during development, I added a Vite proxy configuration that reroutes requests through the local dev server. This allowed API integration to proceed smoothly without needing workarounds like browser extensions or custom headers.
 
 📁 `vite.config.ts`
 
@@ -141,11 +141,21 @@ Error feedback is surfaced using a toast-style notification — clear, non-block
 
 ## 🧭 Page Layout & Routing
 
-Introduced a clean split between landing and results pages:
+The app is split into two main views:
 
--   `LandingPage.vue`: Entry point with hero image and postcode search
--   `SearchResultsPage.vue`: Fetches and displays filtered restaurant data
--   Used Vue Router to navigate between pages and manage query params
+-   `LandingPage.vue`: Entry point with hero image and postcode search box
+-   `SearchResultsPage.vue`: Displays restaurants based on the user's postcode and selected cuisine
+
+Routing is handled using Vue Router, with state passed via query strings (`/search?postcode=EC4M`).
+
+To improve the user experience, I added dynamic, contextual messaging in the results header — e.g.:
+
+> “3 pizza restaurants deliver to EC4M”
+
+This adjusts based on the number of results and selected cuisine using simple pluralisation logic:
+
+-   `restaurant` vs. `restaurants`
+-   `delivers` vs. `deliver`
 
 📁 `src/components/LandingPage.vue`  
 📁 `src/components/SearchResultsPage.vue`  
