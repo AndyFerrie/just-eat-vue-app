@@ -77,18 +77,48 @@ import InfiniteList from '@/components/InfiniteList.vue'
 import Spinner from '@/components/Spinner.vue'
 import NoResults from './NoResults.vue'
 import { fetchRestaurantsByPostcode } from '@/api/justEatApi'
-import type { Restaurant } from '@/types/restaurants'
+import type { CuisineDetail, Restaurant } from '@/types/restaurants'
 
 const route = useRoute()
 
+/**
+ * Postcode entered by the user (used with v-model)
+ */
 const postcode = ref('')
+
+/**
+ * The postcode that was last submitted/searched
+ */
 const searchedPostcode = ref('')
+
+/**
+ * Indicates whether data is currently being loaded
+ */
 const loading = ref(false)
+
+/**
+ * All restaurants returned by the API
+ */
 const restaurants = ref<Restaurant[] | null>(null)
-const allCuisines = ref<string[]>([])
+
+/**
+ * All available cuisine types returned by the API
+ */
+const allCuisines = ref<CuisineDetail[]>([])
+
+/**
+ * Currently selected cuisine filter, or null for all
+ */
 const selectedCuisine = ref<string | null>(null)
+
+/**
+ * Error message from the API call (if any)
+ */
 const error = ref<string | null>(null)
 
+/**
+ * Restaurants filtered by the selected cuisine
+ */
 const filteredRestaurants = computed(() => {
   if (!restaurants.value) return []
   if (!selectedCuisine.value) return restaurants.value
@@ -99,6 +129,10 @@ const filteredRestaurants = computed(() => {
   )
 })
 
+/**
+ * Dynamic message like:
+ * "4 Italian restaurants deliver to SW1A"
+ */
 const restaurantCountText = computed(() => {
   const count = filteredRestaurants.value.length
   const postcodeText = searchedPostcode.value.toUpperCase()
@@ -114,6 +148,13 @@ const restaurantCountText = computed(() => {
   return `${count} ${cuisineText} ${verb} to ${postcodeText}`
 })
 
+/**
+ * Handles the search form submission.
+ * Fetches restaurants and cuisines from the API using the provided postcode.
+ * Resets loading and error state.
+ *
+ * @param value - The postcode submitted by the user
+ */
 const handleSearch = async (value: string) => {
   postcode.value = value
   searchedPostcode.value = value
@@ -141,6 +182,10 @@ const handleSearch = async (value: string) => {
   }
 }
 
+/**
+ * Automatically performs a search if a postcode is present in the route query.
+ * This supports deep linking and browser refresh.
+ */
 watch(
   () => route.query.postcode,
   async (newPostcode: unknown) => {
