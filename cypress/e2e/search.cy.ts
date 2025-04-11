@@ -53,4 +53,12 @@ describe("Just Eat Search Page", () => {
         cy.get('[data-testid="spinner"]').should("not.exist")
         cy.contains("Hm, we couldn’t find 'NORESTAURANTS'").should("exist")
     })
+
+    it("updates the url when searching again", () => {
+        cy.get('[data-testid="spinner"]').should("not.exist")
+        cy.get('input[aria-label="Enter your postcode"]').clear().type("BS8")
+        cy.get('button[aria-label="Search by postcode"]').click()
+
+        cy.url().should("include", "/search?postcode=BS8")
+    })
 })

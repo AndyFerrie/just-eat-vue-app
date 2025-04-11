@@ -149,6 +149,23 @@ const restaurantCountText = computed(() => {
 })
 
 /**
+ * Updates a single query parameter in the browser's URL without reloading the page.
+ * Uses the History API's `pushState` to avoid triggering a full navigation.
+ *
+ * @param {string} key - The name of the query parameter to update.
+ * @param {string} value - The value to set for the query parameter.
+ *
+ * @example
+ * updateQueryParam('postcode', 'SW1A1AA')
+ * // Results in: ?postcode=SW1A1AA
+ */
+const updateQueryParam = (key: string, value: string) => {
+  const url = new URL(window.location.href)
+  url.searchParams.set(key, value)
+  window.history.pushState({}, '', url)
+}
+
+/**
  * Handles the search form submission.
  * Fetches restaurants and cuisines from the API using the provided postcode.
  * Resets loading and error state.
@@ -160,6 +177,9 @@ const handleSearch = async (value: string) => {
   searchedPostcode.value = value
   error.value = null
   loading.value = true
+
+  // Update query param without router
+  updateQueryParam('postcode', value)
 
   restaurants.value = null
   allCuisines.value = []
