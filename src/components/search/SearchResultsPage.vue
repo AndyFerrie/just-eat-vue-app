@@ -100,14 +100,12 @@ const searchedPostcode = ref('')
 const selectedCuisine = ref<string | null>(null)
 
 /**
- * Composable providing search logic and reactive state:
- * - loading: whether a request is in progress
- * - restaurants: list of fetched restaurants
- * - allCuisines: all cuisines available for filtering
- * - searchRestaurants: async search function by postcode
+ * Composable providing search logic and state.
+ * Includes loading status, list of restaurants, and cuisine options.
  */
 const {
   loading,
+  error,
   restaurants,
   allCuisines,
   searchRestaurants
@@ -146,30 +144,37 @@ const restaurantCountText = computed(() => {
 })
 
 /**
- * Submits a new postcode search, updates query param and triggers data fetch.
+ * Handles postcode search submission.
+ * If the search is successful, updates state and URL.
  *
- * @param {string} value - The postcode entered by the user.
+ * @param {string} value - The postcode submitted by the user
  */
 const handleSearch = async (value: string) => {
-  postcode.value = value
-  searchedPostcode.value = value
-  selectedCuisine.value = null
-
-  updateQueryParam('postcode', value)
   await searchRestaurants(value)
+
+  if (!error.value) {
+    postcode.value = value
+    searchedPostcode.value = value
+    selectedCuisine.value = null
+    updateQueryParam('postcode', value)
+  }
 }
 
 /**
- * Watches the `postcode` query parameter in the URL.
- * If present on load or changed, triggers a restaurant search.
+ * Automatically runs a search when a `postcode` query param exists in the URL.
+ * Only updates state if the fetch succeeds.
  */
 watch(
   () => route.query.postcode,
   async (newPostcode: unknown) => {
     if (typeof newPostcode === 'string' && newPostcode.trim()) {
-      postcode.value = newPostcode
-      searchedPostcode.value = newPostcode
       await searchRestaurants(newPostcode)
+
+      if (!error.value) {
+        postcode.value = newPostcode
+        searchedPostcode.value = newPostcode
+        selectedCuisine.value = null
+      }
     }
   },
   { immediate: true }
