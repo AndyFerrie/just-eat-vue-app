@@ -27,12 +27,12 @@
 import Input from '@/components/Input.vue'
 import Button from '@/components/Button.vue'
 
-const postcode = defineModel<string>()
+const postcode = defineModel<string>({ default: '' })
 const emit = defineEmits<{
   (e: 'submit', value: string): void
 }>()
 
 function onSubmit() {
-  emit('submit', postcode.value?.trim().toUpperCase() || '')
+  emit('submit', postcode.value.trim().toUpperCase())
 }
 </script>
