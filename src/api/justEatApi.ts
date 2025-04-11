@@ -1,5 +1,5 @@
 import axios from "axios"
-import type { RestaurantsResponse } from "@/types/restaurants"
+import type { RestaurantsResponse, CuisineDetail } from "@/types/restaurants"
 import { transformRestaurant } from "@/utils/transform"
 
 export const apiClient = axios.create({
@@ -18,9 +18,9 @@ export const fetchRestaurantsByPostcode = async (
         return {
             restaurants: response.data.Restaurants.map(transformRestaurant),
             cuisines:
-                response.data.MetaData?.CuisineDetails.map(
-                    (c: any) => c.Name
-                ).sort() || [],
+                (response.data.MetaData?.CuisineDetails as CuisineDetail[])
+                    ?.map((cuisine: any) => cuisine.Name)
+                    .sort() || [],
         }
     } catch (error) {
         if (axios.isAxiosError(error)) {

@@ -6,7 +6,11 @@ export interface Restaurant {
     cuisines: Array<{ name: string }>
 }
 
+export interface CuisineDetail {
+    Name: string
+}
+
 export interface RestaurantsResponse {
     restaurants: Restaurant[]
-    cuisines: string[]
+    cuisines: CuisineDetail[]
 }
