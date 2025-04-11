@@ -68,14 +68,13 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-
 import PostcodeSearchBox from '@/components/search/PostcodeSearchBox.vue'
 import CuisineFilter from '@/components/search/CuisineFilter.vue'
 import RestaurantCard from '@/components/search/RestaurantCard.vue'
 import InfiniteList from '@/components/search/InfiniteList.vue'
 import Spinner from '@/components/common/Spinner.vue'
 import NoResults from '@/components/search/NoResults.vue'
-
+import { formatRestaurantCount } from '@/utils/formatRestaurantCount'
 import { useRestaurantSearch } from '@/composables/useRestaurantSearch'
 import { updateQueryParam } from '@/utils/url'
 
@@ -129,18 +128,11 @@ const filteredRestaurants = computed(() => {
  * "4 Italian restaurants deliver to SW1A"
  */
 const restaurantCountText = computed(() => {
-  const count = filteredRestaurants.value.length
-  const postcodeText = searchedPostcode.value.toUpperCase()
-
-  if (!count || !postcodeText) return ''
-
-  const isSingular = count === 1
-  const cuisineText = selectedCuisine.value
-    ? `${selectedCuisine.value} restaurant${isSingular ? '' : 's'}`
-    : `restaurant${isSingular ? '' : 's'}`
-  const verb = isSingular ? 'delivers' : 'deliver'
-
-  return `${count} ${cuisineText} ${verb} to ${postcodeText}`
+  return formatRestaurantCount(
+    filteredRestaurants.value.length,
+    selectedCuisine.value,
+    searchedPostcode.value
+  )
 })
 
 /**
