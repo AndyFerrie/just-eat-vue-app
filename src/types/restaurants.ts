@@ -7,7 +7,7 @@ export interface Restaurant {
 }
 
 export interface CuisineDetail {
-    Name: string
+    name: string
 }
 
 export interface RestaurantsResponse {
