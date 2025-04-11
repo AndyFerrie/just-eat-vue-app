@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import type { Restaurant } from '@/types/restaurants'
-import StarRating from '@/components/StarRating.vue'
+import StarRating from '@/components/common/StarRating.vue'
 
 const { restaurant } = defineProps<{
   /**

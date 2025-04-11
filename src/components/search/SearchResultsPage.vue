@@ -69,12 +69,12 @@
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
-import PostcodeSearchBox from '@/components/PostcodeSearchBox.vue'
-import CuisineFilter from '@/components/CuisineFilter.vue'
-import RestaurantCard from '@/components/RestaurantCard.vue'
-import InfiniteList from '@/components/InfiniteList.vue'
-import Spinner from '@/components/Spinner.vue'
-import NoResults from './NoResults.vue'
+import PostcodeSearchBox from '@/components/search/PostcodeSearchBox.vue'
+import CuisineFilter from '@/components/search/CuisineFilter.vue'
+import RestaurantCard from '@/components/search/RestaurantCard.vue'
+import InfiniteList from '@/components/search/InfiniteList.vue'
+import Spinner from '@/components/common/Spinner.vue'
+import NoResults from '@/components/search/NoResults.vue'
 
 import { useRestaurantSearch } from '@/composables/useRestaurantSearch'
 import { updateQueryParam } from '@/utils/url'

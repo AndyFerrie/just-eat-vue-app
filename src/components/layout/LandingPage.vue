@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import PostcodeSearchBox from '@/components/PostcodeSearchBox.vue'
+import PostcodeSearchBox from '@/components/search/PostcodeSearchBox.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()

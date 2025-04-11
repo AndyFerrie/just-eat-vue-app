@@ -24,8 +24,8 @@
 </template>
 
 <script setup lang="ts">
-import Input from '@/components/Input.vue'
-import Button from '@/components/Button.vue'
+import Input from '@/components/common/Input.vue'
+import Button from '@/components/common/Button.vue'
 
 /**
  * Two-way bound model representing the user's postcode input.
