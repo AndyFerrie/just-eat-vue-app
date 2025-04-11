@@ -36,12 +36,21 @@
 
 <script setup lang="ts">
 const props = defineProps<{
+  /**
+   * Numerical rating value (e.g. 4.3)
+   */
   value: number
+
+  /**
+   * Maximum number of stars (default is 5)
+   */
   max?: number
 }>()
 
+// Ensure the rating is a number and clamp it to the max
 const max = props.max ?? 5
 const rating = Number(props.value)
 
+// Round rating to nearest whole number for full star display
 const fullStars = Math.round(rating)
 </script>

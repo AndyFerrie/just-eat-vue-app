@@ -32,8 +32,13 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+/**
+ * Handles postcode search submission.
+ * Navigates to the SearchResults route with the postcode as a query param.
+ *
+ * @param postcode - The postcode string submitted by the user
+ */
 const handleSearch = (postcode: string) => {
-  // Redirect to the results page (e.g., /search?postcode=EC4M)
   router.push({ name: 'SearchResults', query: { postcode } })
 }
 </script>

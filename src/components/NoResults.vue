@@ -35,6 +35,9 @@
 
 <script setup lang="ts">
 defineProps<{
+  /**
+   * The query string the user searched for (e.g. a postcode)
+   */
   searchQuery: string
 }>()
 </script>

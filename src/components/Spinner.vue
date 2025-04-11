@@ -43,6 +43,9 @@
 
 <script setup lang="ts">
 defineProps<{
+  /**
+   * Optional message to display under the spinner
+   */
   label?: string
 }>()
 </script>

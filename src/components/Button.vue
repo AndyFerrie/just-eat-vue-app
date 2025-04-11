@@ -7,22 +7,54 @@
         disabled ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : primary ? 'bg-primary text-white hover:bg-orange-600' : 'bg-gray-500 text-white hover:bg-gray-600', props.extraClass]"
         @click="handleClick"
     >
+        <!-- 
+          Default slot for button content.
+          Typically used for button label or icon.
+          Example: <BaseButton>Save</BaseButton>
+        -->
         <slot></slot>
     </button>
 </template>
 
 <script setup lang="ts">
 const props = defineProps<{
+  /**
+   * Button type attribute (e.g. "button", "submit", "reset")
+   */
   type?: 'button' | 'submit' | 'reset'
+
+  /**
+   * Whether the button should use primary styling
+   */
   primary?: boolean
+
+  /**
+   * Disables the button and prevents clicks
+   */
   disabled?: boolean
+
+  /**
+   * Extra CSS classes passed in by the parent
+   */
   extraClass?: string
 }>()
 
+/**
+ * Emits events from the button component.
+ * - click: Triggered when the button is clicked (unless disabled)
+ *   @param event - Native mouse event from the click
+ */
 const emit = defineEmits<{
   (e: 'click', event: MouseEvent): void
 }>()
 
+/**
+ * Handles click events.
+ * Prevents click behavior if the button is disabled,
+ * otherwise emits a 'click' event to the parent.
+ *
+ * @param event - MouseEvent from the button click
+ */
 const handleClick = (event: MouseEvent) => {
   if (props.disabled) {
     event.preventDefault()

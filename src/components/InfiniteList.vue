@@ -27,12 +27,30 @@ import { ref, computed, watch } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
 
 const props = defineProps<{
+  /**
+   * The full array of items to paginate through
+   */
   items: T[]
+
+  /**
+   * Number of items to show at a time (defaults to 10)
+   */
   step?: number
+
+  /**
+   * Optional string key to uniquely identify each item (e.g. 'id')
+   */
   keyBy?: string
+
+  /**
+   * Optional test ID used to target this list in tests
+   */
   testId?: string
 }>()
 
+/**
+ * Emits when more items are loaded (e.g., for analytics or tracking)
+ */
 const emit = defineEmits<{
   (e: 'load'): void
 }>()
@@ -41,30 +59,43 @@ const step = props.step ?? 10 // Default step size is 10
 const visibleCount = ref(step) // Number of items currently visible
 const loadMoreTrigger = ref<HTMLElement | null>(null) // Ref to the invisible trigger element
 
-// Slice the items array to only show what's currently visible
+/**
+ * Computes the currently visible items to render in the list
+ */
 const visibleItems = computed(() =>
   props.items.slice(0, visibleCount.value)
 )
 
-// Whether there are more items to load
+/**
+ * Whether there are more items to load (used to toggle the sentinel)
+ */
 const hasMore = computed(() =>
   visibleCount.value < props.items.length
 )
 
-// Increments visible count and emits load event
+/**
+ * Loads the next batch of items by increasing the visible count.
+ * Also emits a 'load' event for the parent to react to.
+ */
 const loadMore = () => {
   visibleCount.value += step
   emit('load')
 }
 
-// Sets up an intersection observer to trigger loadMore when the sentinel becomes visible
+/**
+ * Uses an intersection observer to automatically load more items
+ * when the invisible trigger enters the viewport.
+ */
 useIntersectionObserver(loadMoreTrigger, ([{ isIntersecting }]) => {
   if (isIntersecting && hasMore.value) {
     loadMore()
   }
 })
 
-// Reset visible count when the item list changes (e.g., after new search)
+/**
+ * Resets the visible item count when the items array changes
+ * (e.g. after a new search or filter is applied).
+ */
 watch(() => props.items, () => {
   visibleCount.value = step
 })

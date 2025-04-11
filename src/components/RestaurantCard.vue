@@ -35,6 +35,9 @@ import type { Restaurant } from '@/types/restaurants'
 import StarRating from '@/components/StarRating.vue'
 
 const { restaurant } = defineProps<{
+  /**
+   * The restaurant data to display
+   */
   restaurant: Restaurant
 }>()
 </script>
