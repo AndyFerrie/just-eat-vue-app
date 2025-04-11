@@ -28,17 +28,21 @@
 
 <script setup lang="ts">
 import PostcodeSearchBox from '@/components/search/PostcodeSearchBox.vue'
+import { useRestaurantSearch } from '@/composables/useRestaurantSearch'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const { searchRestaurants, error } = useRestaurantSearch()
 
 /**
  * Handles postcode search submission.
- * Navigates to the SearchResults route with the postcode as a query param.
- *
- * @param postcode - The postcode string submitted by the user
+ * Calls the API, shows error toast if needed, and navigates on success.
  */
-const handleSearch = (postcode: string) => {
+const handleSearch = async (postcode: string) => {
+  await searchRestaurants(postcode)
+
+  if (!error.value) {
   router.push({ name: 'SearchResults', query: { postcode } })
+  }
 }
 </script>
