@@ -14,7 +14,7 @@
         />
 
         <NoResults
-            v-if="searchedPostcode && restaurants && restaurants.length === 0"
+            v-if="searchedPostcode && restaurants.length === 0"
             :searchQuery="searchedPostcode"
         />
 
@@ -68,7 +68,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { toast } from 'vue-sonner'
 
 import PostcodeSearchBox from '@/components/PostcodeSearchBox.vue'
 import CuisineFilter from '@/components/CuisineFilter.vue'
@@ -76,9 +75,13 @@ import RestaurantCard from '@/components/RestaurantCard.vue'
 import InfiniteList from '@/components/InfiniteList.vue'
 import Spinner from '@/components/Spinner.vue'
 import NoResults from './NoResults.vue'
-import { fetchRestaurantsByPostcode } from '@/api/justEatApi'
-import type { Restaurant } from '@/types/restaurants'
 
+import { useRestaurantSearch } from '@/composables/useRestaurantSearch'
+import { updateQueryParam } from '@/utils/url'
+
+/**
+ * Access to the current route object, used to read query params.
+ */
 const route = useRoute()
 
 /**
@@ -92,39 +95,33 @@ const postcode = ref('')
 const searchedPostcode = ref('')
 
 /**
- * Indicates whether data is currently being loaded
- */
-const loading = ref(false)
-
-/**
- * All restaurants returned by the API
- */
-const restaurants = ref<Restaurant[] | null>(null)
-
-/**
- * All available cuisine types returned by the API
- */
-const allCuisines = ref<string[]>([])
-
-/**
  * Currently selected cuisine filter, or null for all
  */
 const selectedCuisine = ref<string | null>(null)
 
 /**
- * Error message from the API call (if any)
+ * Composable providing search logic and reactive state:
+ * - loading: whether a request is in progress
+ * - restaurants: list of fetched restaurants
+ * - allCuisines: all cuisines available for filtering
+ * - searchRestaurants: async search function by postcode
  */
-const error = ref<string | null>(null)
+const {
+  loading,
+  restaurants,
+  allCuisines,
+  searchRestaurants
+} = useRestaurantSearch()
 
 /**
  * Restaurants filtered by the selected cuisine
  */
 const filteredRestaurants = computed(() => {
-  if (!restaurants.value) return []
   if (!selectedCuisine.value) return restaurants.value
   return restaurants.value.filter((restaurant) =>
     restaurant.cuisines.some(
-      (cuisine) => cuisine.name.toLowerCase() === selectedCuisine.value?.toLowerCase()
+      (cuisine) =>
+        cuisine.name.toLowerCase() === selectedCuisine.value?.toLowerCase()
     )
   )
 })
@@ -149,73 +146,30 @@ const restaurantCountText = computed(() => {
 })
 
 /**
- * Updates a single query parameter in the browser's URL without reloading the page.
- * Uses the History API's `pushState` to avoid triggering a full navigation.
+ * Submits a new postcode search, updates query param and triggers data fetch.
  *
- * @param {string} key - The name of the query parameter to update.
- * @param {string} value - The value to set for the query parameter.
- *
- * @example
- * updateQueryParam('postcode', 'SW1A1AA')
- * // Results in: ?postcode=SW1A1AA
- */
-const updateQueryParam = (key: string, value: string) => {
-  const url = new URL(window.location.href)
-  url.searchParams.set(key, value)
-  window.history.pushState({}, '', url)
-}
-
-/**
- * Handles the search form submission.
- * Fetches restaurants and cuisines from the API using the provided postcode.
- * Resets loading and error state.
- *
- * @param value - The postcode submitted by the user
+ * @param {string} value - The postcode entered by the user.
  */
 const handleSearch = async (value: string) => {
   postcode.value = value
   searchedPostcode.value = value
-  error.value = null
-  loading.value = true
-
-  // Update query param without router
-  updateQueryParam('postcode', value)
-
-  restaurants.value = null
-  allCuisines.value = []
   selectedCuisine.value = null
 
-  try {
-    const result = await fetchRestaurantsByPostcode(value)
-    restaurants.value = result.restaurants
-    allCuisines.value = result.cuisines
-    selectedCuisine.value = null
-  } catch (err: any) {
-    const message = err.message || 'Something went wrong'
-    error.value = message
-    toast.error(message)
-    restaurants.value = null
-    allCuisines.value = []
-    selectedCuisine.value = null
-  } finally {
-    loading.value = false
-  }
+  updateQueryParam('postcode', value)
+  await searchRestaurants(value)
 }
 
 /**
- * Automatically performs a search if a postcode is present in the route query.
- * This supports deep linking and browser refresh.
+ * Watches the `postcode` query parameter in the URL.
+ * If present on load or changed, triggers a restaurant search.
  */
 watch(
   () => route.query.postcode,
   async (newPostcode: unknown) => {
     if (typeof newPostcode === 'string' && newPostcode.trim()) {
-      try {
-        postcode.value = newPostcode
-        await handleSearch(newPostcode)
-      } catch (error) {
-        console.error('Error in handleSearch:', error)
-      }
+      postcode.value = newPostcode
+      searchedPostcode.value = newPostcode
+      await searchRestaurants(newPostcode)
     }
   },
   { immediate: true }
