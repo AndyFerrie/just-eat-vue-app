@@ -77,7 +77,7 @@ import InfiniteList from '@/components/InfiniteList.vue'
 import Spinner from '@/components/Spinner.vue'
 import NoResults from './NoResults.vue'
 import { fetchRestaurantsByPostcode } from '@/api/justEatApi'
-import type { CuisineDetail, Restaurant } from '@/types/restaurants'
+import type { Restaurant } from '@/types/restaurants'
 
 const route = useRoute()
 
@@ -104,7 +104,7 @@ const restaurants = ref<Restaurant[] | null>(null)
 /**
  * All available cuisine types returned by the API
  */
-const allCuisines = ref<CuisineDetail[]>([])
+const allCuisines = ref<string[]>([])
 
 /**
  * Currently selected cuisine filter, or null for all

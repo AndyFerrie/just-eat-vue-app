@@ -13,28 +13,27 @@
 
         <Button
             v-for="cuisine in cuisines"
-            :key="cuisine.name"
-            :primary="selected === cuisine.name"
+            :key="cuisine"
+            :primary="selected === cuisine"
             :disabled="disabled"
             class="justify-start w-full px-3 py-2 text-sm"
-            :aria-label="`Filter by ${cuisine.name}`"
-            :aria-pressed="selected === cuisine.name"
-            @click="$emit('select', cuisine.name)"
+            :aria-label="`Filter by ${cuisine}`"
+            :aria-pressed="selected === cuisine"
+            @click="$emit('select', cuisine)"
         >
-            {{ cuisine.name }}
+            {{ cuisine }}
         </Button>
     </div>
 </template>
 
 <script setup lang="ts">
 import Button from '@/components/Button.vue'
-import type { CuisineDetail } from '@/types/restaurants';
 
 const { cuisines, selected, disabled } = defineProps<{
   /**
    * List of cuisine names to render as buttons
    */
-  cuisines: CuisineDetail[]
+  cuisines: string[]
 
   /**
    * The currently selected cuisine, or null for "All"
